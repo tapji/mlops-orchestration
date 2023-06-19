@@ -10,7 +10,7 @@ import mlflow
 import xgboost as xgb
 from prefect import flow, task, schedules
 
-@task(retries=3, retry_delay_seconds=2)
+@task(retries=3, retry_delay_seconds=2, name="Read taxi data")
 def read_data(filename: str) -> pd.DataFrame:
     """Read data into DataFrame"""
     df = pd.read_parquet(filename)
