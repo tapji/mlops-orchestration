@@ -8,8 +8,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.metrics import mean_squared_error
 import mlflow
 import xgboost as xgb
-from prefect import flow, task
-
+from prefect import flow, task, schedules
 
 @task(retries=3, retry_delay_seconds=2)
 def read_data(filename: str) -> pd.DataFrame:
@@ -107,7 +106,10 @@ def train_best_model(
 
         mlflow.xgboost.log_model(booster, artifact_path="models_mlflow")
     return None
-
+@Flow(
+    name="Deployment Flow",
+    schedule=schedules.CronSchedule("0 9 3 * *", start_date=datetime.utcnow()),
+)
 
 @flow
 def main_flow(
